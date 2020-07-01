@@ -1,0 +1,29 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+<div style="max-height:1000px;margin:30px 0px;padding:30px;overflow:auto">
+    @using (Html.BeginForm("Index","Rent",FormMethod.Post,new { id=@ViewBag.book.bookID }))
+    { 
+        <div class="float-left"><img src="@Url.Content(@ViewBag.book.imgurl)"  style="width:280px;height:330px;" /></div>
+        <div class="float-left" style="margin-left:20px;width:600px;">
+            <h3>@ViewBag.book.bookName</h3>
+            <span>@ViewBag.book.author | @ViewBag.book.yearofPublication | @ViewBag.book.publisher</span><br/><br/>
+            <label for="Desciprtion"><b>Description:</b></label><br/>
+            <span>@ViewBag.book.description</span>
+        </div>
+        if (!ViewBag.rented)
+        {
+            <div class="float-right" style="margin-left:20px;">
+                <button class="btn btn-primary" onclick="javascript:document.getElementById(@ViewBag.book.bookID).submit()">Rent for &#x20B9;@ViewBag.book.rent /per month</button>
+            </div>
+        }
+        else
+        {
+            <div class="float-right" style="margin-left:20px;">
+                <a class="btn btn-primary" href="/MyAccount/Mybooks">My Library</a>
+            </div>
+        }
+
+    }
+</div>

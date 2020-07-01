@@ -1,0 +1,42 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="container-fluid">
+    <div style="text-align:center;margin-top:30px;margin-bottom:30px;">
+        @using (Html.BeginForm("Index","Home",FormMethod.Post,new { @id="category" }))
+        {
+            <div class="row" style="margin-left:400px;"><div style="margin-right:15px;"><b>Category:</b></div>@Html.DropDownList("categoryID", null, htmlAttributes: new { @class = "form-control", @onchange = "changedcategory(event)" })</div>
+        }
+    </div>
+    <div class="row ml-auto">
+        @foreach (var book in ViewBag.Books)
+        {
+            using (Html.BeginForm("BookSelected", "Home" ,new { bookid = @book.bookID }))
+            {
+
+                <div class="col-xl-4 col-lg-4  col-md-6" style="margin-bottom: 50px;">
+                    <div class="card shadow" style="width:280px;height:516px;">
+                        <img class="card-img-top" src="@Url.Content(@book.imgurl)" alt="@book.bookID" style="width:100%;height:300px;">
+                        <div class="card-body mycardbody">
+                            <blockquote class="blockquote" style="height:120px;">
+                                <span>@book.bookName</span>
+                                <footer class="text-secondary cardfooter"><span style="font-size:18px;">@book.author</span></footer>
+                            
+                            </blockquote>
+                            @if (!User.IsInRole("Manager"))
+                            {
+                                <button class="btn btn btn-primary" onclick="javascript: document.getElementById(@book.bookID).submit()">Rent</button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+<script>
+    function changedcategory(event) {
+        $("#category").submit();
+    };
+</script>

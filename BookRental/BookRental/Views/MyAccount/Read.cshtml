@@ -1,0 +1,52 @@
+﻿@{
+    ViewBag.Title = "Read";
+}
+<br />
+
+<style>
+        .but {
+            margin: 10px;
+        }
+
+        .page-info {
+            margin-top: 17px;
+        }
+
+        #pageNumber {
+            width: 70px;
+        }
+</style>
+
+<script>
+    function uniKeyCode(event) {
+	var key = event.keyCode;
+	console.log('Keypress: ' + key);
+	if (key == 37) {
+		showPrevPage();
+	}
+
+	if (key == 39) {
+		showNextPage();
+	}
+	document.getElementById("demo2").innerHTML = "The Unicode KEY code is: " + key;
+}
+</script>
+
+<body onkeydown="uniKeyCode(event)">
+    @Html.ActionLink("Back to Library","Mybooks","MyAccount")
+    @Html.Hidden("path",(string)@ViewBag.path)
+    <div class="container-fluid" style="text-align:center;">
+        
+            <div class="row" style="margin:20px 400px; ">
+                <button class="btn btn-primary but" id="prev-page">Prev Page</button>
+                <button class="btn btn-primary but" id="next-page">Next Page</button>
+                <input type="number" id="pageNumber" class="form-control col-sm-1 but" />
+                <div><h4 class="page-info but">
+                    Page <span id="page-num"></span> of <span id="page-count"></span>
+                </h4></div>
+            </div>
+           <canvas id="pdf-render"></canvas>
+    </div>
+    <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
+    <script src="/Content/myPdf.js"></script>
+</body>

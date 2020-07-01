@@ -1,0 +1,39 @@
+﻿@using Microsoft.AspNet.Identity
+
+<ul class="navbar-nav ml-auto">
+
+    @if (Request.IsAuthenticated)
+    {
+        using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+        {
+            @Html.AntiForgeryToken()
+
+            
+                <li class="nav-item dropdown" id="user"  style="margin-right: 40px;">
+                    <div>
+                        <a class="nav-link dropdown-toggle" style="cursor: pointer;" id="username" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            @User.Identity.GetUserName()
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            @if (!User.IsInRole("Manager"))
+                            {
+                                <a class="dropdown-item" style="cursor: pointer;" href="/Manage">My Account</a>
+                                <a class="dropdown-item" style="cursor: pointer;" href="/MyAccount/Mybooks">My Library</a>
+                                <div class="dropdown-divider"></div>
+                            }
+                            <a class="dropdown-item" style="cursor: pointer;" onclick="javascript:document.getElementById('logoutForm').submit()">Logout</a>
+                        </div>
+                    </div>
+                </li>
+
+
+        }
+    }
+    else
+    {
+        <li class="nav-item">@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink", @class = "nav-link" })</li>
+        <li class="nav-item">@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink", @class = "nav-link" })</li>
+
+    }
+</ul>

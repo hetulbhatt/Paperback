@@ -1,0 +1,287 @@
+﻿@model BookRental.Models.Transaction
+@{
+    ViewBag.Title = "Index";
+    BookRental.Models.Transaction t = new BookRental.Models.Transaction();
+}
+
+
+
+<div class="container-fluid" style="margin-top: 40px;overflow:auto">
+    @using (Html.BeginForm("Payment", "Rent", FormMethod.Post,new { @id="mainform" }))
+    {
+        @Html.AntiForgeryToken()
+        
+    <div style="float: right;position: static;max-height:1000px">
+           <div class="shadow" style="background-color: white;padding:25px 20px;width:310px;max-height:650px">
+            <div>
+                <div class="text-primary" style="font-size: 20px;"><b>RENT SUMMARY</b></div>
+            </div><br />
+            <div style="display: inline-block;">
+                <h4>@ViewBag.book.bookName</h4>
+            </div><br />
+            <div>
+                <h6 class="text-info">@ViewBag.book.author | @ViewBag.book.publisher | @ViewBag.book.yearofPublication</h6>
+            </div><hr />
+            <div style="margin-bottom: 20px;max-height: 150px;">
+                <div style="float: right;">
+                    @Html.DropDownList("subscriptionPeriod", (SelectList)ViewBag.sub, new { @onchange="changed(event)"  })
+                </div>
+                <div>
+                    <h6>Subscription:(months)</h6>
+                </div>
+            </div><hr/>
+            <div style="padding:10px 0px;">
+            <h5>NOTE:</h5>
+            <span>The subscription is valid from date of purchase to subscription period. You need to subscribe again to continue.</span>
+            <!--<div>
+                    <h5>PROMOTION CODE</h5>
+                </div>
+                <div id="promo" class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="Promo Code">
+                    <div class="input-group-append">
+                        <button class="btn btn-dark" type="submit">APPLY</button>
+                    </div>
+                </div>-->
+            </div><hr/>
+            <div style="background-color:blanchedalmond;margin-top:20px;height: 40px;padding: 8px;">
+                <div id="rent" style="float: right">Rs.@ViewBag.rent</div>
+                <div>
+                    <h6>Amount Payable</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="shadow" style="width:950px;max-height:650px;">
+        <div style="width:100%;background-color: white;">
+            <button id="paymentdetailbtn" class="btn text-secondary"
+                    style="background-color:#49ba8e;padding: 15px;border-radius:0px;width:100%;text-align: left;"
+                    >
+                Payment Options
+            </button>
+            <div id="paymentdetaildiv" style="overflow: hidden;width: 100%;">
+                <div id="payment_options" style="float: left;">
+                    <div>
+                        <button id="card" class="btn text-secondary shadow"
+                                style="background-color:white;padding:25px;margin-bottom: 2px;height: 80px;width:190px;border-radius:0px;"
+                                onclick="payment_option(event)">
+                            Debit/Credit
+                            Card
+                        </button>
+                    </div>
+                    <div>
+                        <button id="netbanking" class="btn text-secondary shadow"
+                                style="background-color:#CAC8C8;padding:25px;margin-bottom: 2px;height: 80px;width:190px;border-radius:0px;"
+                                onclick="payment_option(event)">
+                            Net
+                            Banking
+                        </button>
+                    </div>
+                    <div>
+                        <button id="paytm" class="btn text-secondary shadow"
+                                style="background-color:#CAC8C8;padding:25px;margin-bottom: 2px;height: 80px;width:190px;border-radius:0px;"
+                                onclick="payment_option(event)">
+                            Paytm
+                        </button>
+                    </div>
+                    <div>
+                        <button id="upi" class="btn text-secondary shadow"
+                                style="background-color:#CAC8C8;padding:25px;margin-bottom: 2px;height: 80px;width:190px;border-radius:0px;"
+                                onclick="payment_option(event)">
+                            UPI
+                        </button>
+                    </div>
+                </div>
+                <div id="paymentsections">
+                    <div id="cardsection">
+                        <div class="shadow"
+                             style="background-color:#CAC8C8;height:230px;float:left;width:430px;padding: 15px;margin:50px 50px;border-radius: 5px;">
+                           <div style="margin-bottom: 10px;">
+                                    <div class="text-secondary">Card Number</div>
+                                    <div>
+                                        @Html.EditorFor(m => m.cardNumber , new { htmlAttributes = new { @class = "form-control paycdnumtxt",@placeholder="Enter Your Card Number" } })
+                                        <!--<input class="form-control" type="number" style="width:200px;margin: 5px 0px;font-size: 13px;"
+                                               placeholder="Enter Your Card Number" required>-->
+                                    </div>
+                                    <div>
+                                        @Html.EditorFor(m => m.cardholderName, new { htmlAttributes = new { @class = "form-control paycdnumtxt", @placeholder = "Name on the card" } })
+                                        <!--<input class="form-control" type="text" style="width:200px;font-size: 13px;"
+                                               placeholder="Name on the card" required>-->
+                                    </div>
+                                </div>
+                                <div>
+                                    <div style="float: left;">
+                                        <div class="text-secondary">Expiry</div>
+                                        <div>
+                                            @Html.EditorFor(m => m.expMonth, new { htmlAttributes = new { @class = "form-control paycdmontxt", @placeholder = "MM" } })
+                                            <!--<input class="form-control" type="number" placeholder="MM"
+                                                   style="margin-right: 10px;width:65px;float: left;font-size: 13px;" min="00" max="31"
+                                                   required>-->
+                                            @Html.EditorFor(m => m.expYear, new { htmlAttributes = new { @class = "form-control paycdmontxt", @placeholder = "YYYY",@minlength="4", @maxlength = "4" } })
+                                            <!--<input class="form-control"
+                                                                   style="margin-right: 10px;width:65px;float: left;font-size: 13px;" type="number" minlength="4"
+                                                                   maxlength="4" placeholder="YYYY" required>-->
+                                        </div>
+                                    </div>
+                                    <div style="float: left;">
+                                        <div class="text-secondary">CVV</div>
+                                        <div>
+                                            @Html.EditorFor(m => m.cvv, new { htmlAttributes = new { @class = "form-control paycdcvvtxt", @placeholder = "CVV", @minlength = "3", @maxlength = "3" } })
+                                            <!--<input class="form-control" style="width:70px;font-size: 13px;" minlength="3" maxlength="3"
+                                                   type="password" placeholder="CVV" required>-->
+                                        </div>
+                                    </div><br />
+                                    <div style="float:left;margin-left: 10px;">
+                                        <input type="submit" class="btn btn-primary" onclick="submitform()" value="MAKE PAYMENT">
+                                    </div>
+                                </div>
+                            
+                        </div>
+                       </div>
+                    <div id="netbankingsection" style="display: none;">
+                        <div class="shadow"
+                             style="background-color:#CAC8C8;height:230px;float:left;width:430px;padding: 15px;margin:50px 50px;border-radius: 5px;">
+                            
+                            <div style="margin-bottom: 10px;">
+                                <div class="text-secondary">NET BANKCard Number</div>
+                                <div>
+                                    <input class="form-control" type="number" style="width:200px;margin: 5px 0px;font-size: 13px;"
+                                           placeholder="Enter Your Card Number" required>
+                                </div>
+                                <div>
+                                    <input class="form-control" type="text" style="width:200px;font-size: 13px;"
+                                           placeholder="Name on the card" required>
+                                </div>
+                            </div>
+                            <div>
+                                <div style="float: left;">
+                                    <div class="text-secondary">Expiry</div>
+                                    <div>
+                                        <input class="form-control" type="number" placeholder="MM"
+                                               style="margin-right: 10px;width:65px;float: left;font-size: 13px;" min="00" max="31"
+                                               required><input class="form-control"
+                                                               style="margin-right: 10px;width:65px;float: left;font-size: 13px;" type="number" minlength="4"
+                                                               maxlength="4" placeholder="YYYY" required>
+                                    </div>
+                                </div>
+                                <div style="float: left;">
+                                    <div class="text-secondary">CVV</div>
+                                    <div>
+                                        <input class="form-control" style="width:70px;font-size: 13px;" minlength="3" maxlength="3"
+                                               type="password" placeholder="CVV" required>
+                                    </div>
+                                </div><br />
+                                <div style="float:left;margin-left: 10px;">
+                                    <button class="btn btn-primary">MAKE PAYMENT</button>
+                                </div>
+                            </div>
+                           
+                        </div>
+                    </div>
+                    <div id="paytmsection" style="display: none;">
+                        <div class="shadow"
+                             style="background-color:#CAC8C8;height:230px;float:left;width:430px;padding: 15px;margin:50px 50px;border-radius: 5px;">
+                          
+                            <div style="margin-bottom: 10px;">
+                                <div class="text-secondary">PAYTMCard Number</div>
+                                <div>
+                                    <input class="form-control" type="number" style="width:200px;margin: 5px 0px;font-size: 13px;"
+                                           placeholder="Enter Your Card Number" required>
+                                </div>
+                                <div>
+                                    <input class="form-control" type="text" style="width:200px;font-size: 13px;"
+                                           placeholder="Name on the card" required>
+                                </div>
+                            </div>
+                            <div>
+                                <div style="float: left;">
+                                    <div class="text-secondary">Expiry</div>
+                                    <div>
+                                        <input class="form-control" type="number" placeholder="MM"
+                                               style="margin-right: 10px;width:65px;float: left;font-size: 13px;" min="00" max="31"
+                                               required><input class="form-control"
+                                                               style="margin-right: 10px;width:65px;float: left;font-size: 13px;" type="number" minlength="4"
+                                                               maxlength="4" placeholder="YYYY" required>
+                                    </div>
+                                </div>
+                                <div style="float: left;">
+                                    <div class="text-secondary">CVV</div>
+                                    <div>
+                                        <input class="form-control" style="width:70px;font-size: 13px;" minlength="3" maxlength="3"
+                                               type="password" placeholder="CVV" required>
+                                    </div>
+                                </div><br />
+                                <div style="float:left;margin-left: 10px;">
+                                    <button class="btn btn-primary">MAKE PAYMENT</button>
+                                </div>
+                            </div>
+                          
+                        </div>
+                    </div>
+                    <div id="upisection" style="display: none;">
+                        <div class="shadow"
+                             style="background-color:#CAC8C8;height:230px;float:left;width:430px;padding: 15px;margin:50px 50px;border-radius: 5px;">
+                          
+                             <div style="margin-bottom: 10px;">
+                                <div class="text-secondary">UPICard Number</div>
+                                <div>
+                                    <input class="form-control" type="number" style="width:200px;margin: 5px 0px;font-size: 13px;"
+                                           placeholder="Enter Your Card Number" required>
+                                </div>
+                                <div>
+                                    <input class="form-control" type="text" style="width:200px;font-size: 13px;"
+                                           placeholder="Name on the card" required>
+                                </div>
+                            </div>
+                            <div>
+                                <div style="float: left;">
+                                    <div class="text-secondary">Expiry</div>
+                                    <div>
+                                        <input class="form-control" type="number" placeholder="MM"
+                                               style="margin-right: 10px;width:65px;float: left;font-size: 13px;" min="00" max="31"
+                                               required><input class="form-control"
+                                                               style="margin-right: 10px;width:65px;float: left;font-size: 13px;" type="number" minlength="4"
+                                                               maxlength="4" placeholder="YYYY" required>
+                                    </div>
+                                </div>
+                                <div style="float: left;">
+                                    <div class="text-secondary">CVV</div>
+                                    <div>
+                                        <input class="form-control" style="width:70px;font-size: 13px;" minlength="3" maxlength="3"
+                                               type="password" placeholder="CVV" required>
+                                    </div>
+                                </div><br />
+                                <div style="float:left;margin-left: 10px;">
+                                    <button class="btn btn-primary">MAKE PAYMENT</button>
+                                </div>
+                            </div>
+                          
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+<script>
+    function changed(event) {
+        var cost=event.target.value*@ViewBag.rent;
+        document.getElementById("rent").innerText="Rs."+cost;
+    };
+    function submitform() {
+        $("#mainform").submit();
+    };
+    function payment_option(event){
+        const d = '#' + event.target.id + 'section';
+        $('#payment_options button').css('background-color', '#CAC8C8');
+        const I = '#' + event.target.id;
+        // alert( I );
+        $(I).css('background-color', 'white');
+        $('#paymentsections > div').css('display', 'none');
+        $(d).css('display', 'inline');
+    };
+</script>
